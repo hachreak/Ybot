@@ -443,10 +443,16 @@ load_plugin(Plugin) ->
             lager:info("Loading plugin(Scala) ~s", [Name]),
             {plugin, "scala", Name, Plugin};
         [] ->
+            % rebar2 project
+            REBAR2 = filelib:wildcard(Plugin ++ "/ebin/*.app"),
+            REBAR3 = filelib:wildcard(
+                       Plugin ++ "/_build/default/lib/*/ebin/*.app"),
             % Check Erlang/OTP plugin
-            case filelib:wildcard(Plugin ++ "/ebin/*.app") of
+            case REBAR2 ++ REBAR3 of
                 [AppFile] ->
                     AppName = list_to_atom(filename:basename(AppFile, ".app")),
+                    Dir = filename:dirname(AppFile),
+                    code:add_path(Dir),
                     [_, Name] = string:tokens(Plugin, "/"),
                     lager:info("Loading plugin(Erlang) ~s", [Name]),
                     application:start(AppName),
