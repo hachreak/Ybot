@@ -93,7 +93,7 @@ handle_cast({send_message, From, Message}, State) ->
                               timer:sleep(200),
                               % Send message to irc
                               (State#state.socket_mod):send(State#state.socket, "PRIVMSG " ++ Chan ++ " :" ++ Mes ++ "\r\n")
-                          end, 
+                          end,
                           MessagesList);
         {user, FullUser} ->
             % Send messages
@@ -102,8 +102,8 @@ handle_cast({send_message, From, Message}, State) ->
                               % Get username
                               [UserName | _] = string:tokens(FullUser, "!"),
                               % Send private message to irc
-                              (State#state.socket_mod):send(State#state.socket, "PRIVMSG " ++ UserName ++ " :" ++ Mes ++ "\r\n")
-                          end, 
+                              (State#state.socket_mod):send(State#state.socket, unicode:characters_to_binary("PRIVMSG " ++ UserName ++ " :" ++ Mes ++ "\r\n"))
+                          end,
                           MessagesList);
         [] ->
             ignore
@@ -191,7 +191,7 @@ handle_info({_, Socket, Data}, State) ->
             [Symb | _] = To,
             % Get user
             [$: | From] = User,
-            % Check the first symbol   
+            % Check the first symbol
             case Symb of
                 % this is public message
                 $# ->
@@ -226,7 +226,7 @@ terminate(_Reason, State) ->
 
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
- 
+
 %% Internal functions
 
 irc_connect(Socket, State) ->
@@ -238,7 +238,7 @@ do_connect(Mod, Socket, Pass, Name, ChanList) ->
     [ join_channel(Mod, Socket, Chan, ChanKey) || {Chan, ChanKey} <- ChanList ].
 
 pass_maybe(_, _, <<>>) -> ok;
-pass_maybe(M, Socket, Pass) when is_binary(Pass) -> 
+pass_maybe(M, Socket, Pass) when is_binary(Pass) ->
     M:send(Socket, "PASS " ++ binary_to_list(Pass) ++ "\r\n").
 
 sign_in(M, Socket, Name) ->
@@ -246,7 +246,7 @@ sign_in(M, Socket, Name) ->
     M:send(Socket, "USER " ++ binary_to_list(Name) ++ " nohost noserver :Ybot\r\n").
 
 join_channel(M, Socket, Chan, ChanKey) ->
-    Delay = case M of 
+    Delay = case M of
       ssl -> ?TIMEOUT;
       _ -> 0
     end,
