@@ -11,3 +11,7 @@ erl_crash.dump
 *~
 Mnesia.*
 config/*
+_build
+rebar.lock
+plugins/*/_build
+plugins/*/rebar.lock
