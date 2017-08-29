@@ -167,7 +167,7 @@ handle_cast({start_transports, Transports}, State) ->
                                                %% we no need in http transport
                                                false;
                                           true ->
-                                               {true, erlang:element(2, Transport)} 
+                                               {true, erlang:element(2, Transport)}
                                        end
                                end, TransportList),
     {noreply, State#state{transports = TransportList,
@@ -288,7 +288,7 @@ load_transport({hipchat, Login, Password, Room, Host, Resource, HipChatNick,
 
     %% Make room
     XmppRoom =
-        list_to_binary(binary_to_list(Room) ++ "/" ++ binary_to_list(HipChatNick)), 
+        list_to_binary(binary_to_list(Room) ++ "/" ++ binary_to_list(HipChatNick)),
 
     %% Run new xmpp client
     {ok, ClientPid} =
@@ -340,7 +340,7 @@ load_transport({http, Host, Port, BotNick}) ->
     %% Send bot nick to http server
     ok = gen_server:cast(HttpPid, {bot_nick, BotNick}),
 
-    {http, HttpPid};
+    {true, {http, HttpPid}};
 
 %% @doc start flowdock client
 load_transport({flowdock, NickInChat, Login, Password, FlowdockOrg, Flow,
