@@ -1,0 +1,3 @@
+[submodule "plugins/R1D2"]
+	path = plugins/R1D2
+	url = https://github.com/hachreak/R1D2.git
