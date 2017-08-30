@@ -22,11 +22,18 @@ execute(_) ->
     end, lists:zip(Seq, List)),
 
   format(lists:map(fun(El) ->
-      [_, NameHtml | _] = re:split(El, "span", [{return,list}]),
-      [_, _, Name| _] = re:split(NameHtml, "([<>])", [{return,list}]),
-      [_, _, _, PriceHtml | _] = re:split(El, "center", [{return,list}]),
-      [_, _, Price | _] = re:split(PriceHtml, "([<>])", [{return,list}]),
-      {re:replace(Name, "\\s+", " ", [global]), Price}
+      Clean = re:replace(El, "<([\/\n\ta-zA-Z0-9\\\\\ =\"\;\%\:\-]+)>", "", [global,{return,list}]),
+      io:format("clean: ~p~n", [Clean]),
+      [_, _, TextDirty | _] = re:split(Clean, "([><]+)", [{return,list}]),
+      io:format("dirty: ~p~n", [TextDirty]),
+      [Name, Price] = lists:filter(fun(Value) -> Value =/= [] end, re:replace(TextDirty, "(\\n|\\t)", "", [global])),
+      % [Name, Price] = lists:flatten(re:replace(TextDirty, "(\\n|\\t)", "", [global, {return, list}])),
+      {Name, Price}
+      % [_, NameHtml | _] = re:split(El, "span", [{return,list}]),
+      % [_, _, Name| _] = re:split(NameHtml, "([<>])", [{return,list}]),
+      % [_, _, _, PriceHtml | _] = re:split(El, "center", [{return,list}]),
+      % [_, _, Price | _] = re:split(PriceHtml, "([<>])", [{return,list}]),
+      % {re:replace(Name, "\\s+", " ", [global]), Price}
     end, MenuHtml)).
 
 format(Menu) ->
